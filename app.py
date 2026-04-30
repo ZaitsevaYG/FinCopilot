@@ -1,12 +1,12 @@
 import streamlit as st
 import os
-from main import run_capex_agent  # Ваш ReAct агент
+from main import run_capex_agent
 from pathlib import Path
 
-st.title("🧠 CapEx AI Аналитик (Qwen2.5)")
-st.markdown("Загрузите Excel/PDF → Выберите задачу → Получите отчёт")
+st.title("🧠 FinCopilot: CapEx AI Аналитик (Qwen2.5)")
+st.markdown("**Загрузите Excel/PDF → Напишите запрос → Получите Excel**")
 
-# Загрузка файлов
+# Загрузка
 uploaded_files = st.file_uploader("📁 inputs/ (Excel/PDF)", accept_multiple=True)
 if uploaded_files:
     inputs_dir = Path("inputs")
@@ -16,32 +16,33 @@ if uploaded_files:
             f.write(file.read())
     st.success("✅ Файлы загружены!")
 
-# Выбор задачи (кнопки)
-task = st.selectbox(
-    "Задача:",
-    [
-        "Полный анализ сметы",
-        "Факторный анализ отклонений",
-        "План/факт таблица",
-        "Таблица ликвидности",
-        "Расчёт себестоимости",
-        "Диаграмма-водопад",
-    ],
-)
+# Запрос
+col1, col2 = st.columns(2)
+with col1:
+    task = st.selectbox("Шаблон:", [
+        "Проанализируй смету",
+        "Факторный анализ отклонений", 
+        "Сравнительная таблица план/факт",
+        "Таблица ликвидности проекта",
+        "Таблица расчета себестоимости",
+        "Построй диаграмму-водопад отклонений",
+        "Полный анализ сметы"
+    ])
+with col2:
+    custom_query = st.text_input("Или свой запрос:", value=task)
 
-if st.button("🚀 Запустить анализ"):
-    query = task
-    filepath = run_capex_agent(query)
+query = custom_query or task
 
-    # Скачивание Excel
+if st.button("🚀 Запустить Qwen2.5 анализ", type="primary"):
+    with st.spinner("Агент думает..."):
+        filepath = run_capex_agent(query)
+    
+    # Скачать
     with open(filepath, "rb") as f:
         st.download_button(
-            label="📥 Скачать Excel отчёт",
+            label=f"📥 {Path(filepath).name}",
             data=f.read(),
             file_name=Path(filepath).name,
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-    st.success(f"Готово: {Path(filepath).name}")
-
-if __name__ == "__main__":
-    pass  # streamlit run app.py
+    st.success(f"✅ Готово!")
