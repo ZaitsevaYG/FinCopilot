@@ -3,7 +3,7 @@ import os
 from main import run_capex_agent
 from pathlib import Path
 
-st.title("🧠 FinCopilot: CapEx AI Аналитик (Qwen2.5)")
+st.title("🧠 FinCopilot: помощник финансового аналитика")
 st.markdown("**Загрузите Excel/PDF → Напишите запрос → Получите Excel**")
 
 # Загрузка
@@ -33,7 +33,7 @@ with col2:
 
 query = custom_query or task
 
-if st.button("🚀 Запустить Qwen2.5 анализ", type="primary"):
+if st.button("🚀 Запустить ФинАгента", type="primary"):
     with st.spinner("Агент думает..."):
         filepath = run_capex_agent(query)
     
