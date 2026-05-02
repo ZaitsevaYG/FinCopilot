@@ -1,78 +1,78 @@
 import streamlit as st
 import os
-from main import run_capex_agent
 from pathlib import Path
+
+# Конфигурация темы и CSS
+st.set_page_config(page_title="АГРОЭКО: ФинАналитик", layout="wide")
 
 st.markdown("""
 <style>
-    /* Фон градиент + текстура */
+    /* Шрифты: PT Sans Narrow и Helios Condensed аналоги (набор системных) */
+    :root {
+        --deep-green: #003f0b;
+        --light-green: #87C800;
+        --add-green: #195532;
+        --gray: #828282;
+    }
+    
+    html, body, [class*="css"] {
+        font-family: 'PT Sans Narrow', 'Arial Narrow', Arial, sans-serif;
+    }
+    
+    h1, h2, h3 {
+        font-family: 'HeliosCond', 'Impact', sans-serif; /* Helios-подобный */
+        color: var(--deep-green);
+    }
+
+    /* Основной фон белый */
     .stApp {
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-        background-attachment: fixed;
+        background-color: #ffffff;
     }
-    /* Основной контейнер с тенью */
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1000px;
-        background: rgba(15, 15, 35, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(79, 152, 163, 0.2);
+    
+    /* Сайдбар */
+    [data-testid="stSidebar"] {
+        background-color: #f4f4f4;
+        border-right: 1px solid #e0e0e0;
     }
-    /* Заголовок */
-    h1 {
-        color: #4f98a3 !important;
-        font-family: 'Segoe UI', sans-serif;
-        text-shadow: 0 2px 10px rgba(79,152,163,0.5);
-        font-size: 2.5rem !important;
+
+    /* Лого-плейсхолдер */
+    .logo-container {
+        padding: 20px;
+        text-align: center;
+        background-color: white;
+        margin-bottom: 20px;
     }
-    /* Кнопки */
+
+    /* Кнопки в корпоративных цветах */
     .stButton > button {
-        background: linear-gradient(45deg, #4f98a3, #227f8b);
-        border-radius: 12px;
-        border: none;
-        color: white;
-        font-weight: 600;
-        padding: 0.8rem 2rem;
-        box-shadow: 0 8px 20px rgba(79,152,163,0.4);
-        transition: all 0.3s ease;
+        background-color: var(--light-green) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 4px;
+        font-weight: bold;
     }
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(79,152,163,0.6);
+        background-color: var(--add-green) !important;
     }
-    /* Файл аплоадер */
-    .uploadedFileUploader {
-        background: rgba(26, 26, 46, 0.8);
-        border-radius: 12px;
-        border: 2px dashed #4f98a3;
+
+    /* Чат-интерфейс */
+    .stChatMessage {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
     }
-    /* Selectbox и инпуты */
-    .stSelectbox > div > div > div, .stTextArea > div {
-        background: rgba(26, 26, 46, 0.9);
-        border-radius: 12px;
-        border: 1px solid #4f98a3;
-    }
-    /* Success сообщения */
-    .stSuccess {
-        background: rgba(67, 122, 34, 0.2);
-        border-radius: 12px;
-        border-left: 4px solid #6daa45;
-    }
-    /* Метрики/статус */
-    [data-testid="stStatusWidget"] {
-        background: rgba(15, 15, 35, 0.7);
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 0.5rem 0;
+    .stChatMessage.user {
+        background-color: #f9f9f9;
+        color: var(--deep-green);
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧠 FinCopilot: помощник финансового аналитика")
-st.markdown("**Загрузите Excel/PDF → Напишите запрос → Получите Excel**")
+with st.sidebar:
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    st.image("assets/image.jpg", width=200) 
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.title("FinCopilot")
+    st.markdown("---")
 
 # Загрузка
 uploaded_files = st.file_uploader("📁 inputs/ (Excel/PDF)", accept_multiple=True)
